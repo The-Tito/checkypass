@@ -60,7 +60,7 @@ describe('buildTips', () => {
     const tips = buildTips(strength, 1, { status: 'found', count: 295389 });
     expect(tips).toHaveLength(3);
     expect(tips[0]?.id).toBe('pwned');
-    expect(tips[0]?.text).toContain('295,389');
+    expect(tips[0]?.text).toContain('cámbiala');
   });
 
   it('para una contraseña débil prioriza los patrones detectados', () => {

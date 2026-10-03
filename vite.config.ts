@@ -23,6 +23,8 @@ export default defineConfig({
     sourcemap: false,
     assetsInlineLimit: 0,
     modulePreload: { polyfill: false },
+    // Los diccionarios de zxcvbn (~840 kB) se cargan de forma diferida; no afectan la carga inicial.
+    chunkSizeWarningLimit: 1000,
   },
   test: {
     environment: 'node',

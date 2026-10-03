@@ -7,6 +7,37 @@ Registro de cada implementación: qué se hizo, por qué, y cómo continuar. La 
 
 ---
 
+## 2026-10-03 · Fase 4 — Interfaz provisional
+
+**Rama:** `feature/ui-base` → PR a `develop`
+
+**Qué se hizo**
+- `src/ui/controller.ts` (Opus): orquesta el análisis. Fuerza local a los 150 ms, HIBP a los 600 ms; cada tecla invalida lo anterior (número de secuencia + `AbortController`), así nunca se pinta el resultado de un valor viejo. Si la contraseña está filtrada, el tiempo de descifrado se muestra "al instante". Estado `loading` solo si de verdad hay que esperar la descarga de zxcvbn; `engine-error` si falla.
+- `src/ui/state.ts`: `ViewState` (`empty` | `loading` | `engine-error` | `result`), sin la contraseña.
+- `index.html` (Sonnet): toda la estructura es estática en el HTML; campo fuera de `<form>` con atributos anti-autocompletado/gestores; botón mostrar/ocultar con `aria-pressed`; región `aria-live` aparte; `<details>` "¿Cómo sé que es seguro?"; créditos y aviso de privacidad.
+- `src/ui/view.ts`: pinta el estado solo con `textContent`/`replaceChildren`/`dataset`; `summarize()` puro para el lector de pantalla (anuncia solo resultados finales). El título de la lista cambia a "Buenas prácticas" con puntaje ≥ 8.
+- `src/ui/input.ts`: precarga zxcvbn al enfocar/tocar el campo; Escape limpia; `pagehide`/`pageshow` (bfcache) borran el valor.
+- Estilos provisionales móvil primero con tokens por nivel en claro/oscuro, `:focus-visible`, `prefers-reduced-motion`.
+- Pruebas: `controller.test.ts` (10, con temporizadores simulados), `view.test.ts` (6). Total 94.
+- Ajuste: el tip de filtración ya no repite el conteo que muestra la alerta.
+
+**Tamaños del build**
+- Carga inicial: HTML 5 kB + CSS 4.5 kB + JS 11.5 kB (5 kB gzip).
+- Diferido al enfocar el campo: zxcvbn + diccionarios ≈ 1.3 MB (≈ 630 kB gzip).
+
+**Verificación en navegador real** (Chromium, viewport iPhone 13, `vite preview` con la CSP de producción)
+- Sin errores de consola ni violaciones de CSP/Trusted Types.
+- Peticiones externas: solo `GET api.pwnedpasswords.com/range/{5 hex}`.
+- `localStorage`/`sessionStorage`/cookies vacíos; URL sin cambios; sin scroll horizontal.
+- `america2024` → 1/10, "al instante", 245 filtraciones. Frase de 4 palabras + número → 10/10, limpia.
+- Con HIBP bloqueado: puntaje local + aviso. Escape vacía el campo.
+
+**Pendiente:** convertir estas comprobaciones en E2E permanentes en CI (fase 5). Probar en WebKit/iOS.
+
+**Siguiente:** Fase 5 (`feature/e2e-privacy`).
+
+---
+
 ## 2026-10-03 · Fase 3 — Fuerza, puntaje, tiempo de crackeo y recomendaciones
 
 **Rama:** `feature/core-strength-score` → PR a `develop`
