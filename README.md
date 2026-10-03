@@ -1,4 +1,6 @@
-# Verifica tu password 🔐
+# checkypass 🔐
+
+*check your password*
 
 Página web que da a tu contraseña una puntuación del 1 al 10, avisa si apareció en filtraciones reales y recomienda cómo mejorarla. Todo se analiza en tu dispositivo. Versión 0.1.0.
 
