@@ -22,7 +22,13 @@ La única conexión externa es con `api.pwnedpasswords.com` para verificar filtr
 - Node.js 24+
 - npm 11+
 
-Los comandos se documentarán una vez que se complete el scaffold del proyecto.
+```bash
+npm ci            # instala dependencias exactas del lockfile
+npm run dev       # servidor de desarrollo
+npm run check     # lint + tipos + guardia de privacidad + pruebas
+npm run build     # compila a dist/
+npm run preview   # sirve dist/ con las cabeceras de seguridad reales (public/_headers)
+```
 
 ## Flujo de trabajo
 
