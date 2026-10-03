@@ -7,6 +7,34 @@ Registro de cada implementación: qué se hizo, por qué, y cómo continuar. La 
 
 ---
 
+## 2026-10-03 · Fase 5 — Pruebas E2E de privacidad y comportamiento
+
+**Rama:** `feature/e2e-privacy` → PR a `develop`
+
+**Qué se hizo**
+- `@playwright/test` 1.63.0; `playwright.config.ts` con 3 proyectos: `chromium-mobile` (Pixel 7), `webkit-mobile` (iPhone 13), `chromium-desktop`. El servidor es `vite preview` con las cabeceras reales de `public/_headers`.
+- `tests/e2e/helpers.ts` (Sonnet): HIBP simulado con relleno y contraseñas "filtradas" declarables, registro de peticiones, captura de violaciones de CSP (`securitypolicyviolation`) y errores de consola.
+- `privacy.spec.ts`: sin peticiones externas al abrir y zxcvbn solo tras enfocar; solo `GET /range/{5 HEX}` con `add-padding`, sin cuerpo; ninguna petición contiene la contraseña, el hash ni el sufijo; prefijo correcto; almacenamiento, cookies e IndexedDB vacíos; la contraseña no aparece en el DOM ni en la URL; sin violaciones de CSP; teclear rápido = 1 consulta; al volver atrás el campo está vacío.
+- `behavior.spec.ts`: estados vacío / filtrada / limpia / HIBP caído / HIBP lento, calibración en navegador real, mostrar/ocultar, Escape.
+- `a11y.spec.ts`: etiqueta accesible, `aria-describedby`, orden de tabulación, `aria-live`, `lang`, un solo `h1`, sin scroll horizontal y objetivos táctiles ≥ 44 px en móvil.
+- CI: job `e2e` (después de `check`) con caché de navegadores; sube el informe solo si falla.
+
+**Bug encontrado y corregido (Opus)**
+- En WebKit, si HIBP no respondía, `AbortSignal.any([signal, AbortSignal.timeout(5000)])` no cortaba el `fetch` y la UI se quedaba en "Revisando filtraciones…" para siempre.
+- `src/core/pwned.ts` ahora usa un `AbortController` propio con `setTimeout` y compite contra una promesa que rechaza al abortar, así el timeout funciona aunque el navegador ignore la señal. Se añadieron 2 pruebas unitarias y se quitó el `fixme` de WebKit.
+
+**Resultado:** 96 unitarias; E2E 69 pasan y 3 se omiten (2 son solo de móvil en el proyecto de escritorio; 1 es Tab→botón en WebKit sobre macOS, donde Tab no enfoca botones por defecto; en CI/Linux sí corre). ~17 s en local.
+
+**Cómo verificar:** `npm run check && npm run test:e2e` (la primera vez: `npx playwright install chromium webkit`).
+
+**Pendiente**
+- Proponer que `e2e` sea check obligatorio en la protección de ramas.
+- Probar en Safari real de iOS antes de publicar.
+
+**Siguiente:** Fase 6 (`release/0.1.0`).
+
+---
+
 ## 2026-10-03 · Fase 4 — Interfaz provisional
 
 **Rama:** `feature/ui-base` → PR a `develop`
