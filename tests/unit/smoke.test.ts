@@ -20,3 +20,13 @@ describe('parseGlobalHeaders', () => {
     expect(parsed).toEqual({ 'X-B': '2' });
   });
 });
+
+describe('_headers: caché de assets', () => {
+  it('cachea /assets/* de forma inmutable y no el HTML', () => {
+    const source = readFileSync('public/_headers', 'utf8');
+    expect(source).toMatch(
+      /^\/assets\/\*\n {2}Cache-Control: public, max-age=31536000, immutable$/m,
+    );
+    expect(parseGlobalHeaders(source)['Cache-Control']).toBeUndefined();
+  });
+});

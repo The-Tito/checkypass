@@ -7,6 +7,17 @@ Registro de cada implementación: qué se hizo, por qué, y cómo continuar. La 
 
 ---
 
+## 2026-10-03 · Caché inmutable de assets
+
+**Rama:** `feature/cache-assets` → PR a `develop`
+
+- `public/_headers`: `/assets/*` → `Cache-Control: public, max-age=31536000, immutable`. Los archivos de `assets/` llevan hash en el nombre, así que cada build cambia sus URL; el HTML sigue sin caché larga (`max-age=0, must-revalidate`, por defecto de Pages) y siempre apunta a los assets vigentes.
+- Efecto: las visitas repetidas no revalidan JS/CSS ni zxcvbn (~630 kB gzip) y Cloudflare sirve mejor el pico de tráfico.
+- Prueba en `smoke.test.ts`: la regla existe y no afecta al bloque global `/*`.
+- Verificar tras desplegar: `curl -sI https://checkypass.pages.dev/assets/<archivo>.js | grep -i cache-control`.
+
+---
+
 ## 2026-10-03 · Primer despliegue y renombre del repositorio
 
 **Rama:** `feature/repo-checkypass` → PR a `develop`
