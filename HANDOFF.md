@@ -7,6 +7,16 @@ Registro de cada implementación: qué se hizo, por qué, y cómo continuar. La 
 
 ---
 
+## 2026-10-03 · Mantenimiento — Dependabot y `@types/node`
+
+**Rama:** `feature/dependabot-types-node` → PR a `develop`
+
+- Dependabot propuso `@types/node` 24 → 26 (PR #8). Se cerró: los tipos deben coincidir con Node 24 (`.node-version` y build de Cloudflare); con los de 26 se podrían usar APIs inexistentes en 24.
+- `.github/dependabot.yml`: se ignoran las versiones mayores de `@types/node`; menores y parches siguen llegando. Se sube a mano al cambiar de versión de Node.
+- Nombre del producto decidido por el usuario: **checkypass** (de "check your password"); proyecto de Cloudflare Pages `checkypass`.
+
+---
+
 ## 2026-10-03 · Fase 6 — Release 0.1.0
 
 **Rama:** `release/0.1.0` → PR a `main` (tag `v0.1.0`) y de vuelta a `develop`
