@@ -7,6 +7,16 @@ Registro de cada implementación: qué se hizo, por qué, y cómo continuar. La 
 
 ---
 
+## 2026-10-03 · Nombre visible checkypass
+
+**Rama:** `feature/brand-checkypass` → PR a `develop`
+
+- `index.html`: `<title>` → "checkypass · ¿Qué tan segura es tu contraseña?", marca del encabezado → "checkypass", `<meta name="application-name">`.
+- `README.md`: título "checkypass" con el lema *check your password*.
+- El `h1` ("¿Qué tan segura es tu contraseña?") no cambia. El diseño final (identidad visual) queda para la siguiente implementación (v0.2.0).
+
+---
+
 ## 2026-10-03 · Caché inmutable de assets
 
 **Rama:** `feature/cache-assets` → PR a `develop`
@@ -32,7 +42,7 @@ Registro de cada implementación: qué se hizo, por qué, y cómo continuar. La 
 **Renombre**
 - Repositorio renombrado por el usuario a `The-Tito/checkypass` (GitHub redirige el nombre anterior). `origin` local actualizado a `git@github.com:The-Tito/checkypass.git`.
 - Actualizados: enlace "Código fuente" en `index.html`, `README.md` (URL del sitio, repo, URLs de Pages), `name` en `package.json`/`package-lock.json`.
-- El nombre visible en la página sigue siendo "Verifica tu password" (pendiente de decidir si pasa a checkypass).
+- El nombre visible en la página pasó a checkypass (ver entrada "Nombre visible checkypass").
 
 **Pendiente**
 - Pruebas manuales en iPhone (Safari) y Android (Chrome) reales; Lighthouse móvil.
