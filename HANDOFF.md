@@ -7,6 +7,17 @@ Registro de cada implementación: qué se hizo, por qué, y cómo continuar. La 
 
 ---
 
+## 2026-10-03 · Release 0.1.1
+
+**Rama:** `release/0.1.1` → PR a `main` (tag `v0.1.1`) y de vuelta a `develop`
+
+- Versión `0.1.1` y entrada en `CHANGELOG.md`: nombre visible checkypass, enlace al repo renombrado, caché inmutable de assets, ajuste de Dependabot.
+- Tras el merge a `main`, Cloudflare Pages despliega automáticamente. Verificar en producción el título, la caché de `/assets/*` y que las cabeceras sigan iguales.
+
+**Siguiente:** rediseño con la identidad visual final (v0.2.0).
+
+---
+
 ## 2026-10-03 · Nombre visible checkypass
 
 **Rama:** `feature/brand-checkypass` → PR a `develop`
