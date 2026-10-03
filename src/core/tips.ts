@@ -8,7 +8,7 @@ import type { Score, StrengthResult, WeakPattern } from './types.ts';
 export const MAX_TIPS = 3;
 export const RECOMMENDED_LENGTH = 12;
 /** A partir de este puntaje la contraseña ya es fuerte y no se critica su estructura. */
-const STRONG_SCORE = 8;
+export const STRONG_SCORE = 8;
 
 export type TipId =
   | 'pwned'
@@ -71,7 +71,10 @@ export function buildTips(
   if (pwned?.status === 'found') {
     tips.push({
       id: 'pwned',
-      text: `Apareció ${formatCount(pwned.count)} en filtraciones. Cámbiala en todos los sitios donde la uses y no la vuelvas a usar.`,
+      text:
+        pwned.count === 1
+          ? 'Ya está en manos de atacantes: cámbiala en todos los sitios donde la uses y no la vuelvas a usar.'
+          : 'Está en las listas de los atacantes: cámbiala en todos los sitios donde la uses y no la vuelvas a usar.',
     });
   }
 
@@ -103,9 +106,4 @@ export function buildTips(
   for (const tip of GOOD_PRACTICE) tips.push(tip);
 
   return tips.slice(0, MAX_TIPS);
-}
-
-function formatCount(count: number): string {
-  if (count === 1) return 'una vez';
-  return `${count.toLocaleString('es-MX')} veces`;
 }
