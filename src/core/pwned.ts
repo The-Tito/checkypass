@@ -80,36 +80,62 @@ export function createPwnedClient(options: PwnedClientOptions = {}): PwnedClient
     prefix: string,
     signal: AbortSignal | undefined,
   ): Promise<Map<string, number> | PwnedFailure> {
-    const timeout = AbortSignal.timeout(timeoutMs);
-    const combined = signal ? AbortSignal.any([signal, timeout]) : timeout;
-
-    let response: Response;
-    try {
-      response = await doFetch(API_BASE + prefix, {
-        method: 'GET',
-        headers: { 'Add-Padding': 'true' },
-        signal: combined,
-        cache: 'no-store',
-        credentials: 'omit',
-        referrerPolicy: 'no-referrer',
-        mode: 'cors',
+    // Controlador propio con temporizador manual: WebKit no siempre aborta un fetch
+    // colgado con AbortSignal.any + AbortSignal.timeout. Además se compite contra una
+    // promesa que rechaza al abortar, por si el fetch ignora la señal.
+    const controller = new AbortController();
+    let timedOut = false;
+    const timer = setTimeout(() => {
+      timedOut = true;
+      controller.abort(new DOMException('Tiempo de espera agotado', 'TimeoutError'));
+    }, timeoutMs);
+    const forwardAbort = (): void => controller.abort(signal?.reason);
+    signal?.addEventListener('abort', forwardAbort, { once: true });
+    const aborted = new Promise<never>((_resolve, reject) => {
+      controller.signal.addEventListener('abort', () => reject(controller.signal.reason), {
+        once: true,
       });
-    } catch {
+    });
+    aborted.catch(() => {}); // Evita "unhandled rejection" si nadie la espera.
+
+    const failure = (): PwnedFailure => {
       if (signal?.aborted) throw signal.reason;
-      return timeout.aborted ? 'timeout' : 'network';
-    }
+      return timedOut ? 'timeout' : 'network';
+    };
 
-    if (!response.ok) return 'http';
-
-    let body: string;
     try {
-      body = await response.text();
-    } catch {
-      if (signal?.aborted) throw signal.reason;
-      return timeout.aborted ? 'timeout' : 'network';
-    }
+      let response: Response;
+      try {
+        response = await Promise.race([
+          doFetch(API_BASE + prefix, {
+            method: 'GET',
+            headers: { 'Add-Padding': 'true' },
+            signal: controller.signal,
+            cache: 'no-store',
+            credentials: 'omit',
+            referrerPolicy: 'no-referrer',
+            mode: 'cors',
+          }),
+          aborted,
+        ]);
+      } catch {
+        return failure();
+      }
 
-    return parseRangeResponse(body) ?? 'invalid-response';
+      if (!response.ok) return 'http';
+
+      let body: string;
+      try {
+        body = await Promise.race([response.text(), aborted]);
+      } catch {
+        return failure();
+      }
+
+      return parseRangeResponse(body) ?? 'invalid-response';
+    } finally {
+      clearTimeout(timer);
+      signal?.removeEventListener('abort', forwardAbort);
+    }
   }
 
   return {
