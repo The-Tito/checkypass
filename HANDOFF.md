@@ -7,6 +7,28 @@ Registro de cada implementación: qué se hizo, por qué, y cómo continuar. La 
 
 ---
 
+## 2026-10-03 · Primer despliegue y renombre del repositorio
+
+**Rama:** `feature/repo-checkypass` → PR a `develop`
+
+**Despliegue**
+- Producción en Cloudflare Pages: https://checkypass.pages.dev/ (proyecto `checkypass`, rama `main`, v0.1.0).
+- Verificado en producción:
+  - Cabeceras idénticas a `public/_headers` (CSP con Trusted Types, HSTS, COOP/CORP, `X-Frame-Options`, etc.); Cloudflare no inyecta scripts.
+  - Chromium (Pixel 7) y WebKit (iPhone 13) con HIBP real: carga ~0,4–0,5 s; 0 peticiones externas al abrir; solo `GET /range/{5 hex}`; `america2024` → 1/10 (245 filtraciones); frase larga → 10/10, limpia; sin almacenamiento, cookies ni cambios de URL; sin violaciones de CSP; sin scroll horizontal.
+  - Nota para pruebas: en WebKit, `page.screenshot()` de Playwright inyecta una hoja de estilos que la CSP bloquea y genera un aviso en consola. Es un artefacto de la herramienta, no de la app.
+
+**Renombre**
+- Repositorio renombrado por el usuario a `The-Tito/checkypass` (GitHub redirige el nombre anterior). `origin` local actualizado a `git@github.com:The-Tito/checkypass.git`.
+- Actualizados: enlace "Código fuente" en `index.html`, `README.md` (URL del sitio, repo, URLs de Pages), `name` en `package.json`/`package-lock.json`.
+- El nombre visible en la página sigue siendo "Verifica tu password" (pendiente de decidir si pasa a checkypass).
+
+**Pendiente**
+- Pruebas manuales en iPhone (Safari) y Android (Chrome) reales; Lighthouse móvil.
+- Propuesta: caché larga e inmutable para `/assets/*` (hoy `max-age=0, must-revalidate`).
+
+---
+
 ## 2026-10-03 · Mantenimiento — Dependabot y `@types/node`
 
 **Rama:** `feature/dependabot-types-node` → PR a `develop`
