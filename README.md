@@ -2,6 +2,8 @@
 
 Página web que da a tu contraseña una puntuación del 1 al 10, avisa si apareció en filtraciones reales y recomienda cómo mejorarla. Todo se analiza en tu dispositivo. Versión 0.1.0.
 
+**Sitio:** https://checkypass.pages.dev/
+
 ## Cómo funciona
 
 - **Fuerza**: zxcvbn-ts en el navegador (diccionarios en español + palabras populares en México). Detecta palabras, nombres, fechas, patrones de teclado, secuencias, repeticiones y sustituciones tipo P@ssw0rd.
@@ -50,16 +52,16 @@ npm run test:e2e     # pruebas de navegador (privacidad, comportamiento, accesib
 
 ## Despliegue en Cloudflare Pages
 
-1. En el panel de Cloudflare: Workers y Pages → Crear → Pages → Conectar con Git → elegir el repositorio `The-Tito/verifica-tu-password`.
+1. En el panel de Cloudflare: Workers y Pages → Crear → Pages → Conectar con Git → elegir el repositorio `The-Tito/checkypass`.
 2. **Configuración de build:**
    - Framework preset: None
    - Comando: `npm run build`
    - Directorio de salida: `dist`
    - Rama de producción: `main`
    - La versión de Node se toma de `.node-version` (24); si el panel no la detecta, añade la variable de entorno `NODE_VERSION=24`.
-3. **Despliegues de vista previa:** activados para `develop` (URL `develop.<proyecto>.pages.dev`).
+3. **Despliegues de vista previa:** activados para `develop` (URL `develop.checkypass.pages.dev`).
 4. **No actives** Cloudflare Web Analytics ni ninguna inyección de scripts en el proyecto: la CSP los bloquearía y además contradicen la promesa de privacidad.
-5. Tras el primer despliegue, comprueba las cabeceras: `curl -sI https://<proyecto>.pages.dev/ | grep -i content-security-policy`.
+5. Tras el primer despliegue, comprueba las cabeceras: `curl -sI https://checkypass.pages.dev/ | grep -i content-security-policy`.
 6. **Opcional:** dominio propio en Custom domains (HTTPS automático).
 
 *Nota:* no hay variables secretas ni backend; cada despliegue queda guardado y se puede revertir desde el panel.
