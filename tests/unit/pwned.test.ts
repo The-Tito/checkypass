@@ -116,6 +116,23 @@ describe('createPwnedClient', () => {
     expect(await client.check('password')).toEqual({ status: 'unavailable', reason: 'timeout' });
   });
 
+  it('reporta timeout aunque fetch ignore la señal de cancelación (WebKit)', async () => {
+    const fetch = mockFetch(() => new Promise(() => {}));
+    const client = createPwnedClient({ fetch, timeoutMs: 20 });
+    expect(await client.check('password')).toEqual({ status: 'unavailable', reason: 'timeout' });
+  });
+
+  it('cancela aunque fetch ignore la señal', async () => {
+    const controller = new AbortController();
+    const pending = createPwnedClient({ fetch: mockFetch(() => new Promise(() => {})) }).check(
+      'password',
+      controller.signal,
+    );
+    await new Promise((resolve) => setTimeout(resolve, 5));
+    controller.abort();
+    await expect(pending).rejects.toMatchObject({ name: 'AbortError' });
+  });
+
   it('propaga la cancelación del llamador como AbortError', async () => {
     const controller = new AbortController();
     const fetch = mockFetch(
