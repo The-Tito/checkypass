@@ -7,6 +7,27 @@ Registro de cada implementación: qué se hizo, por qué, y cómo continuar. La 
 
 ---
 
+## 2026-10-03 · Fase 6 — Release 0.1.0
+
+**Rama:** `release/0.1.0` → PR a `main` (tag `v0.1.0`) y de vuelta a `develop`
+
+**Qué se hizo**
+- Versión `0.1.0` en `package.json`; `CHANGELOG.md` (Keep a Changelog).
+- `README.md` final (Haiku, revisado): cómo funciona, privacidad, guía "Compruébalo tú mismo", desarrollo, despliegue en Cloudflare Pages, flujo de trabajo y créditos.
+- Protección de ramas: `e2e` añadido como check obligatorio junto a `check` en `main` y `develop`.
+
+**Despliegue (lo hace el usuario en el panel de Cloudflare)**
+- Pages → Conectar con Git → `The-Tito/verifica-tu-password`; preset None; build `npm run build`; salida `dist`; producción `main`; vista previa `develop`. `NODE_VERSION=24` si no detecta `.node-version`.
+- **No** activar Web Analytics ni inyección de scripts.
+
+**Pendiente tras conectar Pages**
+- Verificar en `*.pages.dev`: cabeceras (CSP, HSTS…), checklist §11 del brief (red, almacenamiento, Lighthouse móvil ≥ 90, iOS Safari y Android Chrome reales).
+- Decisiones abiertas del usuario: nombre/dominio final (P1), identidad visual y diseño final (P7), aviso al profesor (P6).
+
+**Ideas para v0.2:** generador de frases (P5), rediseño con la marca, imagen Open Graph.
+
+---
+
 ## 2026-10-03 · Fase 5 — Pruebas E2E de privacidad y comportamiento
 
 **Rama:** `feature/e2e-privacy` → PR a `develop`
