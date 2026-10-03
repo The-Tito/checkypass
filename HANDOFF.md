@@ -7,6 +7,70 @@ Registro de cada implementación: qué se hizo, por qué, y cómo continuar. La 
 
 ---
 
+## 2026-10-03 · Release 0.1.1
+
+**Rama:** `release/0.1.1` → PR a `main` (tag `v0.1.1`) y de vuelta a `develop`
+
+- Versión `0.1.1` y entrada en `CHANGELOG.md`: nombre visible checkypass, enlace al repo renombrado, caché inmutable de assets, ajuste de Dependabot.
+- Tras el merge a `main`, Cloudflare Pages despliega automáticamente. Verificar en producción el título, la caché de `/assets/*` y que las cabeceras sigan iguales.
+
+**Siguiente:** rediseño con la identidad visual final (v0.2.0).
+
+---
+
+## 2026-10-03 · Nombre visible checkypass
+
+**Rama:** `feature/brand-checkypass` → PR a `develop`
+
+- `index.html`: `<title>` → "checkypass · ¿Qué tan segura es tu contraseña?", marca del encabezado → "checkypass", `<meta name="application-name">`.
+- `README.md`: título "checkypass" con el lema *check your password*.
+- El `h1` ("¿Qué tan segura es tu contraseña?") no cambia. El diseño final (identidad visual) queda para la siguiente implementación (v0.2.0).
+
+---
+
+## 2026-10-03 · Caché inmutable de assets
+
+**Rama:** `feature/cache-assets` → PR a `develop`
+
+- `public/_headers`: `/assets/*` → `Cache-Control: public, max-age=31536000, immutable`. Los archivos de `assets/` llevan hash en el nombre, así que cada build cambia sus URL; el HTML sigue sin caché larga (`max-age=0, must-revalidate`, por defecto de Pages) y siempre apunta a los assets vigentes.
+- Efecto: las visitas repetidas no revalidan JS/CSS ni zxcvbn (~630 kB gzip) y Cloudflare sirve mejor el pico de tráfico.
+- Prueba en `smoke.test.ts`: la regla existe y no afecta al bloque global `/*`.
+- Verificar tras desplegar: `curl -sI https://checkypass.pages.dev/assets/<archivo>.js | grep -i cache-control`.
+
+---
+
+## 2026-10-03 · Primer despliegue y renombre del repositorio
+
+**Rama:** `feature/repo-checkypass` → PR a `develop`
+
+**Despliegue**
+- Producción en Cloudflare Pages: https://checkypass.pages.dev/ (proyecto `checkypass`, rama `main`, v0.1.0).
+- Verificado en producción:
+  - Cabeceras idénticas a `public/_headers` (CSP con Trusted Types, HSTS, COOP/CORP, `X-Frame-Options`, etc.); Cloudflare no inyecta scripts.
+  - Chromium (Pixel 7) y WebKit (iPhone 13) con HIBP real: carga ~0,4–0,5 s; 0 peticiones externas al abrir; solo `GET /range/{5 hex}`; `america2024` → 1/10 (245 filtraciones); frase larga → 10/10, limpia; sin almacenamiento, cookies ni cambios de URL; sin violaciones de CSP; sin scroll horizontal.
+  - Nota para pruebas: en WebKit, `page.screenshot()` de Playwright inyecta una hoja de estilos que la CSP bloquea y genera un aviso en consola. Es un artefacto de la herramienta, no de la app.
+
+**Renombre**
+- Repositorio renombrado por el usuario a `The-Tito/checkypass` (GitHub redirige el nombre anterior). `origin` local actualizado a `git@github.com:The-Tito/checkypass.git`.
+- Actualizados: enlace "Código fuente" en `index.html`, `README.md` (URL del sitio, repo, URLs de Pages), `name` en `package.json`/`package-lock.json`.
+- El nombre visible en la página pasó a checkypass (ver entrada "Nombre visible checkypass").
+
+**Pendiente**
+- Pruebas manuales en iPhone (Safari) y Android (Chrome) reales; Lighthouse móvil.
+- Propuesta: caché larga e inmutable para `/assets/*` (hoy `max-age=0, must-revalidate`).
+
+---
+
+## 2026-10-03 · Mantenimiento — Dependabot y `@types/node`
+
+**Rama:** `feature/dependabot-types-node` → PR a `develop`
+
+- Dependabot propuso `@types/node` 24 → 26 (PR #8). Se cerró: los tipos deben coincidir con Node 24 (`.node-version` y build de Cloudflare); con los de 26 se podrían usar APIs inexistentes en 24.
+- `.github/dependabot.yml`: se ignoran las versiones mayores de `@types/node`; menores y parches siguen llegando. Se sube a mano al cambiar de versión de Node.
+- Nombre del producto decidido por el usuario: **checkypass** (de "check your password"); proyecto de Cloudflare Pages `checkypass`.
+
+---
+
 ## 2026-10-03 · Fase 6 — Release 0.1.0
 
 **Rama:** `release/0.1.0` → PR a `main` (tag `v0.1.0`) y de vuelta a `develop`

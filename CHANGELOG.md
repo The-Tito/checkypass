@@ -2,6 +2,18 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y [SemVer](https://semver.org/lang/es/).
 
+## [0.1.1] — 2026-10-03
+
+### Cambiado
+- Nombre visible: **checkypass** (título de la pestaña, encabezado y README).
+- Repositorio renombrado a `The-Tito/checkypass`; enlace "Código fuente" actualizado.
+
+### Rendimiento
+- Caché inmutable de un año para `/assets/*` (archivos con hash): las visitas repetidas no vuelven a descargar JS, CSS ni diccionarios.
+
+### Mantenimiento
+- Dependabot ya no propone versiones mayores de `@types/node` (deben coincidir con Node 24).
+
 ## [0.1.0] — 2026-10-03
 
 Primera versión funcional con diseño provisional.

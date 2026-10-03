@@ -5,6 +5,11 @@ updates:
     target-branch: develop
     schedule:
       interval: weekly
+    ignore:
+      # Los tipos deben coincidir con la versión de Node del proyecto (.node-version = 24).
+      # Se sube de mayor a mano cuando se cambie la versión de Node.
+      - dependency-name: '@types/node'
+        update-types: ['version-update:semver-major']
     groups:
       dev-dependencies:
         dependency-type: development
