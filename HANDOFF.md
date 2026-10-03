@@ -7,6 +7,31 @@ Registro de cada implementación: qué se hizo, por qué, y cómo continuar. La 
 
 ---
 
+## 2026-10-03 · Fase 2 — Cliente de filtraciones (HIBP)
+
+**Rama:** `feature/core-pwned` → PR a `develop`
+
+**Qué se hizo**
+- `src/core/pwned.ts` (sin DOM, sin dependencias):
+  - `sha1Hex()` con Web Crypto, UTF-8 sin normalizar (igual que HIBP).
+  - `parseRangeResponse()` valida el formato (`35 hex:conteo`), ignora el relleno (conteo 0) y rechaza respuestas inesperadas.
+  - `createPwnedClient({ fetch?, timeoutMs?, cacheSize? })` → `check(password, signal?)` devuelve `found {count}` | `clean` | `unavailable {reason: network|timeout|http|invalid-response}`. Solo la cancelación del llamador rechaza (`AbortError`), para que la UI descarte peticiones obsoletas.
+  - Petición: solo `/range/{5 hex}`, `Add-Padding: true`, `credentials: 'omit'`, `referrerPolicy: 'no-referrer'`, `cache: 'no-store'`, timeout 5 s (`AbortSignal.any`).
+  - Caché LRU en memoria por prefijo (64 entradas, solo respuestas públicas de HIBP; los fallos no se cachean).
+- `tests/unit/pwned.test.ts` (17 pruebas) + `tests/fixtures/hibp-range-5BAA6.txt`.
+
+**Decisiones**
+- Se comprobó con un preflight real que HIBP responde `access-control-allow-headers: Add-Padding` → **no hace falta fallback sin padding** (resuelve un punto de la checklist §11 del brief).
+- Se descartó deduplicar peticiones en vuelo: compartir una promesa haría que cancelar una consulta cancelara otra.
+
+**Cómo verificar**
+- `npm run check` (20 pruebas en verde).
+- Prueba en vivo realizada: `password` → 52 372 427; `Password123!` → 295 389; frase aleatoria → clean.
+
+**Siguiente:** Fase 3 (`feature/core-strength-score`): zxcvbn-ts diferido + diccionario MX, puntaje por tramos, tiempo de crackeo y recomendaciones, con calibración.
+
+---
+
 ## 2026-10-03 · Fase 1 — Scaffold, cabeceras de seguridad y CI
 
 **Rama:** `feature/scaffold` → PR a `develop`
