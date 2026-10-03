@@ -7,6 +7,39 @@ Registro de cada implementación: qué se hizo, por qué, y cómo continuar. La 
 
 ---
 
+## 2026-10-03 · Fase 3 — Fuerza, puntaje, tiempo de crackeo y recomendaciones
+
+**Rama:** `feature/core-strength-score` → PR a `develop`
+
+**Qué se hizo**
+- Dependencias de runtime: `@zxcvbn-ts/core` 4.2, `language-common` 4.1, `language-es-es` 4.1 (API v4: `new ZxcvbnFactory(options)`).
+- `src/core/strength.ts`: `loadStrengthAnalyzer()` carga zxcvbn y diccionarios con `import()` dinámico una sola vez (reintenta si falla). `toStrengthResult()` traduce el resultado a nuestro modelo (`StrengthResult` en `types.ts`), desacoplado de la librería: `guessesLog10`, segundos de crackeo, patrones débiles, palabra única, longitud Unicode. `maxLength` 256.
+- `src/core/dict-mx.ts`: ~100 palabras populares en México (equipos, ciudades, comida, apodos, marcas) como diccionario `mx-common`.
+- `src/core/score.ts`: tramos explícitos de `guessesLog10` → 1–9, ≥16 → 10. Tope por filtración: máx 2; >100 apariciones → 1; si HIBP no responde, no se limita. `rateScore()` → Muy débil / Débil / Aceptable / Fuerte / Excelente.
+- `src/core/crack-time.ts`: escenario hash lento sin conexión (10⁴ intentos/s), textos propios ("3 horas", "más de un siglo").
+- `src/core/tips.ts`: hasta 3 recomendaciones; la filtración siempre primero; con puntaje ≥8 no critica la estructura (una frase de palabras es buena) y da buenas prácticas (no reutilizar, gestor, 2FA).
+- Pruebas: `score`, `crack-time`, `strength` (calibración con zxcvbn real + patrones + tips). 78 pruebas en total.
+
+**Calibración (puntaje local, antes del tope)**
+| Contraseña | Puntaje |
+|---|---|
+| `123456`, `password`, `qwerty123`, `P@ssw0rd` | 1 |
+| `Password123!`, `america2024`, `chivas10`, `guadalupe1985` | ≤ 3 |
+| `kX9#mQ2$vL` (10 aleatorios) | 6 |
+| frase de 4 palabras | ≥ 8 |
+| 16 caracteres aleatorios | 10 |
+
+**Decisiones**
+- Sin `language-en` por peso; las contraseñas comunes en inglés ya están en `passwords-common`.
+- Los tips no incluyen una frase de ejemplo concreta (la gente la copiaría).
+- Protección de ramas activada en GitHub para `main` y `develop`: PR obligatorio, check `check` requerido, sin force push ni borrado, 0 aprobaciones (trabajo en solitario). Los administradores pueden saltarla en emergencias.
+
+**Cómo verificar:** `npm run check`.
+
+**Siguiente:** Fase 4 (`feature/ui-base`): pantalla provisional, estados, debounce, accesibilidad y carga diferida al enfocar.
+
+---
+
 ## 2026-10-03 · Fase 2 — Cliente de filtraciones (HIBP)
 
 **Rama:** `feature/core-pwned` → PR a `develop`
