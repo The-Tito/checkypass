@@ -9,6 +9,8 @@
       content="Evalúa la fortaleza de tu contraseña y revisa si apareció en filtraciones conocidas. Todo se analiza en tu dispositivo."
     />
     <meta name="referrer" content="no-referrer" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f1218" media="(prefers-color-scheme: dark)" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
   <body>
@@ -16,7 +18,99 @@
       Esta página necesita JavaScript porque el análisis de tu contraseña se hace en tu
       dispositivo.
     </noscript>
-    <main id="app"></main>
+    <main id="app">
+      <header class="page-header">
+        <p class="brand">Verifica tu password</p>
+        <h1>¿Qué tan segura es tu contraseña?</h1>
+      </header>
+
+      <div class="field">
+        <label for="password">Contraseña</label>
+        <div class="field-row">
+          <input
+            id="password"
+            type="password"
+            autocomplete="off"
+            autocapitalize="off"
+            autocorrect="off"
+            spellcheck="false"
+            maxlength="256"
+            data-1p-ignore
+            data-lpignore="true"
+            data-form-type="other"
+            data-bwignore
+            aria-describedby="privacy-note"
+          />
+          <button type="button" id="toggle" aria-pressed="false" aria-controls="password">
+            Mostrar
+          </button>
+        </div>
+        <p id="privacy-note" class="note">
+          Tu contraseña no sale de este dispositivo. ¿Dudas? Prueba con una parecida.
+        </p>
+      </div>
+
+      <p id="status-message" class="status-message" hidden></p>
+
+      <section id="result" class="result" aria-labelledby="result-title" data-state="empty" hidden>
+        <h2 id="result-title" class="sr-only">Resultado</h2>
+        <p class="score-line">
+          <span class="score"><span id="score-value">0</span>/10</span>
+          <span id="score-label" class="score-label"></span>
+        </p>
+        <div class="meter" aria-hidden="true">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+        </div>
+        <p id="crack-time" class="crack-time"></p>
+        <p id="pwned-status" class="pwned" data-status="checking"></p>
+        <div id="tips-block">
+          <h3 id="tips-title">Cómo mejorarla</h3>
+          <ol id="tips" class="tips"></ol>
+        </div>
+      </section>
+
+      <div id="announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+      <details class="how">
+        <summary>¿Cómo sé que es seguro?</summary>
+        <ul>
+          <li>El análisis de fortaleza se hace en tu dispositivo con zxcvbn-ts. Tu contraseña no se envía a ningún servidor.</li>
+          <li>Para revisar filtraciones solo se envían los primeros 5 caracteres de una huella SHA-1 a Have I Been Pwned (k-anonimato). La comparación se hace en tu dispositivo.</li>
+          <li>No se guarda nada: no hay cookies ni almacenamiento en el navegador.</li>
+          <li>Compruébalo tú mismo: abre las herramientas de desarrollador, pestaña Red, y verás una única petición a api.pwnedpasswords.com/range/XXXXX.</li>
+          <li>El tiempo de descifrado supone un ataque sin conexión contra una base de datos robada con hash lento.</li>
+          <li>No aparecer en filtraciones no garantiza que sea segura. No reutilices contraseñas y activa la verificación en dos pasos.</li>
+        </ul>
+      </details>
+
+      <footer class="page-footer">
+        <p>
+          Créditos: idea inspirada en
+          <a href="https://github.com/alonsomaciasm/password-tester-api" rel="noopener noreferrer">password-tester-api</a>
+          del MC. José Alonso Macías Montoya (Universidad Politécnica de Chiapas); análisis con
+          <a href="https://github.com/zxcvbn-ts/zxcvbn" rel="noopener noreferrer">zxcvbn-ts</a>;
+          filtraciones de
+          <a href="https://haveibeenpwned.com/Passwords" rel="noopener noreferrer">Have I Been Pwned</a>
+          de Troy Hunt.
+        </p>
+        <p>
+          Este sitio no usa cookies, analíticas ni guarda datos. Cloudflare (hosting) y Have I
+          Been Pwned ven tu dirección IP, como cualquier sitio web.
+        </p>
+        <p>
+          <a href="https://github.com/The-Tito/verifica-tu-password" rel="noopener noreferrer">Código fuente</a>
+        </p>
+      </footer>
+    </main>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
