@@ -15,7 +15,7 @@ export const MESSAGES = {
 } as const;
 
 const DETAILS = {
-  checking: 'Solo 5 de los 40 caracteres de su huella salen de tu dispositivo.',
+  checking: 'Solo enviamos un pedacito de su huella, nunca tu contraseña.',
   found: 'Está en las listas que los atacantes prueban primero.',
   clean: 'Eso no la vuelve invulnerable: úsala en un solo sitio.',
   unavailable: 'El puntaje solo considera su estructura. Escribe de nuevo para reintentar.',
@@ -43,8 +43,8 @@ export function pwnedMessage(pwned: PwnedView): string {
 /** Texto de `#crack-time`: prefijo y valor (el valor se resalta en la interfaz). */
 export function crackTimeParts(crackTime: string): { prefix: string; value: string } {
   return crackTime === 'al instante'
-    ? { prefix: 'Se descifra ', value: 'al instante' }
-    : { prefix: 'Se descifra en ', value: crackTime };
+    ? { prefix: 'Se adivina ', value: 'al instante' }
+    : { prefix: 'Tardarían en adivinarla: ', value: crackTime };
 }
 
 const COUNT_MS = 400;

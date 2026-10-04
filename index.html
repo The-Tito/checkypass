@@ -25,7 +25,7 @@
     </noscript>
     <header class="page-header">
       <p class="brand">checkypass</p>
-      <p class="local-tag"><span class="local-dot" aria-hidden="true"></span>análisis local</p>
+      <p class="local-tag"><span class="local-dot" aria-hidden="true"></span>todo pasa en tu equipo</p>
     </header>
     <main id="app">
       <h1>¿Qué tan segura es tu contraseña?</h1>
@@ -124,12 +124,23 @@
       <details class="how">
         <summary>¿Cómo sé que es seguro?</summary>
         <ol>
-          <li>Tu contraseña se analiza aquí, en tu navegador.</li>
-          <li>Para filtraciones se calcula su huella SHA-1 y solo se envían sus primeros 5 caracteres a Have I Been Pwned.</li>
-          <li>La respuesta trae cientos de huellas parecidas; la comparación se hace en tu dispositivo.</li>
-          <li>Nada se guarda: sin cookies ni almacenamiento. Compruébalo en la pestaña Red de tu navegador.</li>
-          <li>El tiempo de descifrado supone un ataque sin conexión contra una base de datos robada; no aparecer en filtraciones no garantiza que sea segura.</li>
+          <li><strong>Tu contraseña no viaja.</strong> Todo el análisis ocurre en tu celular o computadora; no la mandamos a ningún lado.</li>
+          <li><strong>Para buscar filtraciones usamos una «huella».</strong> Tu contraseña se convierte en un código que no se puede revertir, como una huella digital: sirve para comparar, pero nadie puede saber a partir de él cuál es tu contraseña.</li>
+          <li><strong>Solo preguntamos por un pedacito de esa huella.</strong> Es como preguntar «¿qué apellidos empiezan con <em>Gonz</em>?»: la respuesta trae cientos de opciones y nadie sabe cuál es la tuya.</li>
+          <li><strong>La comparación final se hace en tu dispositivo.</strong> Tu equipo revisa esa lista y descubre, solo para ti, si tu contraseña aparece.</li>
+          <li><strong>No guardamos nada.</strong> Ni cookies ni historial. Al cerrar la página, todo se borra.</li>
+          <li><strong>Una buena calificación no es garantía.</strong> Que no aparezca en filtraciones solo significa que no la hemos visto filtrada. Úsala en un solo sitio y activa la verificación en dos pasos.</li>
         </ol>
+        <details class="tech">
+          <summary>Detalles técnicos</summary>
+          <ul>
+            <li>La fuerza se estima con zxcvbn-ts en el navegador.</li>
+            <li>La «huella» es un hash SHA-1. Por k-anonimato solo se envían sus primeros 5 de 40 caracteres a api.pwnedpasswords.com, con relleno en la respuesta (Add-Padding) para que su tamaño no revele nada.</li>
+            <li>El tiempo para adivinarla supone un ataque sin conexión contra una base de datos robada con hash lento (10 000 intentos por segundo).</li>
+            <li>Compruébalo: abre las herramientas de desarrollador → pestaña Red y verás una única petición a /range/ seguida de 5 caracteres. No hay cookies ni almacenamiento local.</li>
+            <li>El <a href="https://github.com/The-Tito/checkypass" rel="noopener noreferrer">código es abierto</a> y cada cambio se verifica con pruebas automáticas de privacidad.</li>
+          </ul>
+        </details>
       </details>
     </main>
     <footer class="page-footer">

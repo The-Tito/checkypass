@@ -52,10 +52,13 @@ describe('summarize', () => {
 describe('textos de la interfaz', () => {
   it('separa el prefijo y el valor del tiempo de descifrado', () => {
     expect(crackTimeParts('al instante')).toEqual({
-      prefix: 'Se descifra ',
+      prefix: 'Se adivina ',
       value: 'al instante',
     });
-    expect(crackTimeParts('3 años')).toEqual({ prefix: 'Se descifra en ', value: '3 años' });
+    expect(crackTimeParts('3 años')).toEqual({
+      prefix: 'Tardarían en adivinarla: ',
+      value: '3 años',
+    });
   });
 
   it('da un subtexto por estado de filtraciones sin prometer seguridad', () => {
