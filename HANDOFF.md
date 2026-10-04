@@ -7,6 +7,16 @@ Registro de cada implementación: qué se hizo, por qué, y cómo continuar. La 
 
 ---
 
+## 2026-10-04 · Release 0.2.0
+
+**Rama:** `release/0.2.0` → PR a `main` (tag `v0.2.0`) y de vuelta a `develop`
+
+- Versión `0.2.0` y entrada en `CHANGELOG.md` con el rediseño.
+- Aprobado por el usuario tras revisar la vista previa en `develop.checkypass.pages.dev`.
+- Tras el merge, Cloudflare Pages despliega en https://checkypass.pages.dev/; verificar título, fuentes del propio origen, cabeceras y flujo en Chromium y WebKit.
+
+---
+
 ## 2026-10-04 · Rediseño v0.2 "Señal / constelación" (minimalista)
 
 **Rama:** `feature/redesign-v0.2` → PR a `develop`
