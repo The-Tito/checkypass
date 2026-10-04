@@ -2,6 +2,12 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y [SemVer](https://semver.org/lang/es/).
 
+## [0.2.1] — 2026-10-04
+
+### Cambiado
+- "¿Cómo sé que es seguro?" en lenguaje sencillo, con un desplegable aparte de "Detalles técnicos".
+- Textos más claros: "todo pasa en tu equipo", "Tardarían en adivinarla" y el aviso mientras se revisan filtraciones.
+
 ## [0.2.0] — 2026-10-04
 
 ### Cambiado

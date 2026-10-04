@@ -7,6 +7,12 @@ Registro de cada implementación: qué se hizo, por qué, y cómo continuar. La 
 
 ---
 
+## 2026-10-04 · Release 0.2.1
+
+**Rama:** `release/0.2.1` → PR a `main` (tag `v0.2.1`) y de vuelta a `develop`. Contiene los textos en lenguaje sencillo.
+
+---
+
 ## 2026-10-04 · Lenguaje sencillo en "¿Cómo sé que es seguro?"
 
 **Rama:** `feature/plain-language` → PR a `develop`
