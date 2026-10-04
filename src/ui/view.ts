@@ -6,13 +6,24 @@ import type { PwnedView, ViewState } from './state.ts';
 const numberFormat = new Intl.NumberFormat('es-MX');
 
 export const MESSAGES = {
-  empty: 'Escribe una contraseña para analizarla',
+  empty: 'Esperando… nada sale de aquí sin que lo veas.',
   loading: 'Preparando el analizador…',
   engineError: 'No se pudo cargar el analizador. Revisa tu conexión y vuelve a intentarlo.',
   checking: 'Revisando filtraciones…',
   clean: 'No aparece en filtraciones conocidas.',
-  unavailable: 'No se pudo revisar filtraciones ahora. El puntaje solo considera su estructura.',
+  unavailable: 'No se pudo revisar filtraciones ahora.',
 } as const;
+
+const DETAILS = {
+  checking: 'Solo 5 de los 40 caracteres de su huella salen de tu dispositivo.',
+  found: 'Está en las listas que los atacantes prueban primero.',
+  clean: 'Eso no la vuelve invulnerable: úsala en un solo sitio.',
+  unavailable: 'El puntaje solo considera su estructura. Escribe de nuevo para reintentar.',
+} as const;
+
+export function pwnedDetail(pwned: PwnedView): string {
+  return DETAILS[pwned.status];
+}
 
 export function pwnedMessage(pwned: PwnedView): string {
   switch (pwned.status) {
@@ -29,8 +40,17 @@ export function pwnedMessage(pwned: PwnedView): string {
   }
 }
 
-export function crackTimeMessage(crackTime: string): string {
-  return crackTime === 'al instante' ? 'Se descifra: al instante' : `Se descifra en: ${crackTime}`;
+/** Texto de `#crack-time`: prefijo y valor (el valor se resalta en la interfaz). */
+export function crackTimeParts(crackTime: string): { prefix: string; value: string } {
+  return crackTime === 'al instante'
+    ? { prefix: 'Se descifra ', value: 'al instante' }
+    : { prefix: 'Se descifra en ', value: crackTime };
+}
+
+const COUNT_MS = 400;
+
+function pad(score: number): string {
+  return String(score).padStart(2, '0');
 }
 
 /**
@@ -55,26 +75,66 @@ export interface View {
 }
 
 export function createView(root: Document): View {
+  const statusWrap = byId(root, 'status-wrap', HTMLElement);
   const message = byId(root, 'status-message', HTMLParagraphElement);
   const result = byId(root, 'result', HTMLElement);
   const scoreValue = byId(root, 'score-value', HTMLElement);
   const scoreLabel = byId(root, 'score-label', HTMLElement);
   const crackTime = byId(root, 'crack-time', HTMLElement);
+  const pwnedBlock = byId(root, 'pwned-block', HTMLElement);
   const pwnedEl = byId(root, 'pwned-status', HTMLElement);
+  const pwnedDetailEl = byId(root, 'pwned-detail', HTMLElement);
   const tipsBlock = byId(root, 'tips-block', HTMLElement);
   const tipsTitle = byId(root, 'tips-title', HTMLElement);
-  const tipsList = byId(root, 'tips', HTMLOListElement);
+  const tipsList = byId(root, 'tips', HTMLUListElement);
   const announcer = byId(root, 'announcer', HTMLElement);
-  const segments = Array.from(result.querySelectorAll<HTMLElement>('.meter > span'));
+  const view = root.defaultView;
 
   let lastSummary = '';
+  let shownScore = 0;
+  let frame = 0;
+
+  function cancelCount(): void {
+    if (frame !== 0) view?.cancelAnimationFrame(frame);
+    frame = 0;
+  }
+
+  /** Cuenta desde el valor mostrado hasta `target`; el valor final siempre queda exacto. */
+  function showScore(target: number): void {
+    cancelCount();
+    const reduced = view?.matchMedia('(prefers-reduced-motion: reduce)').matches ?? true;
+    if (!view || reduced || shownScore === target) {
+      shownScore = target;
+      setText(scoreValue, pad(target));
+      return;
+    }
+    const from = shownScore;
+    const start = view.performance.now();
+    const step = (now: number): void => {
+      const t = Math.min(1, (now - start) / COUNT_MS);
+      shownScore = t >= 1 ? target : Math.round(from + (target - from) * (1 - (1 - t) ** 3));
+      setText(scoreValue, pad(shownScore));
+      frame = t < 1 ? view.requestAnimationFrame(step) : 0;
+    };
+    frame = view.requestAnimationFrame(step);
+  }
+
+  function setTone(tone: 'accent' | 'signal'): void {
+    root.documentElement.dataset.tone = tone;
+  }
 
   function showMessage(text: string, state: string): void {
+    cancelCount();
+    shownScore = 0;
+    setText(scoreValue, pad(0));
     setText(message, text);
     message.dataset.state = state;
     message.hidden = false;
+    statusWrap.dataset.state = state;
+    statusWrap.hidden = false;
     result.hidden = true;
     result.dataset.state = state;
+    setTone('accent');
   }
 
   function announce(state: ViewState): void {
@@ -103,18 +163,24 @@ export function createView(root: Document): View {
           break;
         case 'result': {
           message.hidden = true;
+          statusWrap.hidden = true;
           result.hidden = false;
           result.dataset.state = 'result';
           result.dataset.level = state.rating.level;
           result.dataset.score = String(state.score);
-          setText(scoreValue, String(state.score));
+          result.dataset.pwned = state.pwned.status;
+          setTone(state.pwned.status === 'found' ? 'signal' : 'accent');
+          showScore(state.score);
           setText(scoreLabel, state.rating.label);
-          setText(crackTime, crackTimeMessage(state.crackTime));
+          const { prefix, value } = crackTimeParts(state.crackTime);
+          const valueEl = root.createElement('span');
+          valueEl.className = 'crack-value';
+          valueEl.textContent = value;
+          crackTime.replaceChildren(prefix, valueEl);
+          pwnedBlock.dataset.status = state.pwned.status;
           pwnedEl.dataset.status = state.pwned.status;
           setText(pwnedEl, pwnedMessage(state.pwned));
-          segments.forEach((segment, i) => {
-            segment.dataset.on = i < state.score ? 'true' : 'false';
-          });
+          setText(pwnedDetailEl, pwnedDetail(state.pwned));
           tipsBlock.hidden = state.tips.length === 0;
           setText(tipsTitle, state.score >= STRONG_SCORE ? 'Buenas prácticas' : 'Cómo mejorarla');
           tipsList.replaceChildren(
