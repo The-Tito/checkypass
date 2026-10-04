@@ -9,7 +9,7 @@ test.describe('comportamiento', () => {
     await page.goto('/');
     await expect(page.locator('#result')).toBeHidden();
     await expect(page.locator('#status-message')).toBeVisible();
-    await expect(page.locator('#status-message')).toContainText('Escribe una contraseña');
+    await expect(page.locator('#status-message')).toContainText('Esperando');
   });
 
   test('contraseña filtrada: puntaje 1, descifrado al instante y consejo de cambiarla', async ({
@@ -22,7 +22,10 @@ test.describe('comportamiento', () => {
 
     expect(await readScore(page)).toBe(1);
     await expect(page.locator('#result')).toHaveAttribute('data-score', '1');
+    await expect(page.locator('#score-value')).toHaveText('01');
     await expect(page.locator('#crack-time')).toContainText('al instante');
+    await expect(page.locator('#pwned-detail')).toContainText('atacantes prueban primero');
+    await expect(page.locator('html')).toHaveAttribute('data-tone', 'signal');
     await expect(page.locator('#pwned-status')).toContainText('245');
     await expect(page.locator('#tips li').first()).toContainText('cámbiala');
   });
@@ -36,10 +39,25 @@ test.describe('comportamiento', () => {
     await waitForResult(page, 'clean');
 
     expect(await readScore(page)).toBeGreaterThanOrEqual(8);
+    await expect(page.locator('html')).toHaveAttribute('data-tone', 'accent');
     await expect(page.locator('#tips-title')).toHaveText('Buenas prácticas');
     const resultText = await page.locator('#result').innerText();
     expect(resultText.toLowerCase()).not.toContain('es segura');
     expect(resultText.toLowerCase()).not.toContain('es segur');
+  });
+
+  test('con movimiento reducido el número llega directo al valor final', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await mockHibp(page, { leaked: { america2024: 245 } });
+    await page.goto('/');
+    await typePassword(page, 'america2024');
+    await waitForResult(page, 'found');
+    // Sin esperas ni reintentos: no hay animación de conteo.
+    expect(await page.locator('#score-value').innerText()).toBe('01');
+    const animation = await page
+      .locator('.orb-a')
+      .evaluate((el) => getComputedStyle(el).animationName);
+    expect(animation).toBe('none');
   });
 
   test('HIBP caído: el puntaje se muestra y se avisa que no se pudo revisar', async ({ page }) => {

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { rateScore } from '../../src/core/score.ts';
 import type { Score } from '../../src/core/types.ts';
 import type { PwnedView, ViewState } from '../../src/ui/state.ts';
-import { summarize } from '../../src/ui/view.ts';
+import { crackTimeParts, pwnedDetail, summarize } from '../../src/ui/view.ts';
 
 function result(score: Score, pwned: PwnedView): ViewState {
   return {
@@ -46,5 +46,29 @@ describe('summarize', () => {
     expect(summarize(result(6, { status: 'unavailable' }))).toContain(
       'No se pudo revisar filtraciones ahora',
     );
+  });
+});
+
+describe('textos de la interfaz', () => {
+  it('separa el prefijo y el valor del tiempo de descifrado', () => {
+    expect(crackTimeParts('al instante')).toEqual({
+      prefix: 'Se descifra ',
+      value: 'al instante',
+    });
+    expect(crackTimeParts('3 años')).toEqual({ prefix: 'Se descifra en ', value: '3 años' });
+  });
+
+  it('da un subtexto por estado de filtraciones sin prometer seguridad', () => {
+    const details = [
+      pwnedDetail({ status: 'checking' }),
+      pwnedDetail({ status: 'found', count: 3 }),
+      pwnedDetail({ status: 'clean' }),
+      pwnedDetail({ status: 'unavailable' }),
+    ];
+    for (const text of details) {
+      expect(text.length).toBeGreaterThan(0);
+      expect(text).not.toContain('es segura');
+    }
+    expect(details[2]).toContain('invulnerable');
   });
 });
