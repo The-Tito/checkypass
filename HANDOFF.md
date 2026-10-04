@@ -7,6 +7,38 @@ Registro de cada implementación: qué se hizo, por qué, y cómo continuar. La 
 
 ---
 
+## 2026-10-04 · Release 0.2.0
+
+**Rama:** `release/0.2.0` → PR a `main` (tag `v0.2.0`) y de vuelta a `develop`
+
+- Versión `0.2.0` y entrada en `CHANGELOG.md` con el rediseño.
+- Aprobado por el usuario tras revisar la vista previa en `develop.checkypass.pages.dev`.
+- Tras el merge, Cloudflare Pages despliega en https://checkypass.pages.dev/; verificar título, fuentes del propio origen, cabeceras y flujo en Chromium y WebKit.
+
+---
+
+## 2026-10-04 · Rediseño v0.2 "Señal / constelación" (minimalista)
+
+**Rama:** `feature/redesign-v0.2` → PR a `develop`
+
+**Diseño aprobado** en el lienzo de Claude (iteración 2): una columna, oscuro predeterminado y claro con `prefers-color-scheme: light`, barra con marcas de regla como medidor, fondo con dos orbes difuminados, Instrument Sans + JetBrains Mono, acento cobalto `#4C6BFF` y naranja de señal `#FF6A3D` (claro: `#2B44E0` / `#C9410C`).
+
+**Qué se hizo** (Sonnet implementa; Opus revisa)
+- Fuentes autoalojadas vía `@fontsource-variable/instrument-sans` y `@fontsource-variable/jetbrains-mono` 5.3.0 (OFL-1.1): Vite las emite con hash en `dist/assets` (caché inmutable) y el navegador solo baja los subconjuntos que usa. Sin Google Fonts: la CSP sigue en `font-src 'self'`.
+- `index.html` reestructurado: marca + "análisis local", h1, campo redondeado con etiqueta accesible oculta, nota de privacidad, barra apagada en vacío, resultado (puntaje en mono, barra, tiempo, estado de filtraciones con subtexto `#pwned-detail`, recomendaciones en `ul`), `details` con 5 pasos, pie de una línea con créditos y aviso de IP.
+- `src/ui/view.ts`: ancho de la barra por CSS (`#result[data-score]`), `data-pwned` en el resultado, tono del fondo en `document.documentElement.dataset.tone` (`signal` solo si está filtrada), conteo animado del puntaje con `requestAnimationFrame` (400 ms; directo con movimiento reducido).
+- Microanimaciones activas en móvil y escritorio (solo se apagan con `prefers-reduced-motion`): deriva de orbes (solo transform), entrada escalonada del resultado, transición de la barra, pulso y línea de escaneo en "revisando", conteo del número.
+- Placeholder acortado a "Escribe aquí" (se cortaba en móvil). `!important` intencionales documentados con `biome-ignore`.
+- Pruebas: E2E nuevos de movimiento reducido y de tono; `readScore` lee `#result[data-score]` (el texto anima). 99 unitarias; E2E 72 pasan, 3 omitidas (ya existentes).
+
+**Privacidad en el diseño:** se descartó mostrar el prefijo real del hash en pantalla: junto con el conteo permitiría identificar el hash exacto en HIBP desde una captura o un video.
+
+**Tamaños:** HTML 6.4 kB, CSS 12.4 kB; fuentes latin ≈ 70 kB (Instrument Sans 30 kB + JetBrains Mono 40 kB); JS sin cambios.
+
+**Pendiente:** release `v0.2.0`; revisar rendimiento del desenfoque en Android de gama baja.
+
+---
+
 ## 2026-10-03 · Release 0.1.1
 
 **Rama:** `release/0.1.1` → PR a `main` (tag `v0.1.1`) y de vuelta a `develop`

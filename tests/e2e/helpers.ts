@@ -184,5 +184,6 @@ export async function waitForResult(
 }
 
 export async function readScore(page: Page): Promise<number> {
-  return Number(await page.locator('#score-value').innerText());
+  // `#score-value` se anima al contar; el valor definitivo vive en `#result[data-score]`.
+  return Number(await page.locator('#result').getAttribute('data-score'));
 }

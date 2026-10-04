@@ -2,6 +2,16 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y [SemVer](https://semver.org/lang/es/).
 
+## [0.2.0] — 2026-10-04
+
+### Cambiado
+- Rediseño completo "Señal / constelación": una columna minimalista, oscuro predeterminado y claro según el sistema, medidor en barra con marcas de regla y fondo con orbes difuminados que cambian a naranja si la contraseña está filtrada.
+- Tipografía Instrument Sans + JetBrains Mono, autoalojadas (OFL); la CSP no cambia.
+- Estado de filtraciones con texto principal y explicación breve; "¿Cómo sé que es seguro?" en 5 pasos.
+
+### Añadido
+- Microanimaciones (deriva del fondo, entrada escalonada, llenado de la barra, pulso y escaneo al revisar, conteo del puntaje). Se desactivan con "reducir movimiento".
+
 ## [0.1.1] — 2026-10-03
 
 ### Cambiado
