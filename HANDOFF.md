@@ -7,6 +7,24 @@ Registro de cada implementación: qué se hizo, por qué, y cómo continuar. La 
 
 ---
 
+## 2026-10-04 · Release 0.2.1
+
+**Rama:** `release/0.2.1` → PR a `main` (tag `v0.2.1`) y de vuelta a `develop`. Contiene los textos en lenguaje sencillo.
+
+---
+
+## 2026-10-04 · Lenguaje sencillo en "¿Cómo sé que es seguro?"
+
+**Rama:** `feature/plain-language` → PR a `develop`
+
+- A petición del usuario: la sección usaba términos técnicos (SHA-1, pestaña Red, ataque sin conexión) que alguien sin perfil técnico no entiende.
+- `index.html`: 6 puntos en lenguaje cotidiano (la contraseña no viaja, «huella» como huella digital, analogía de los apellidos que empiezan con *Gonz*, comparación en tu equipo, no se guarda nada, la calificación no es garantía) y un desplegable secundario **"Detalles técnicos"** (zxcvbn-ts, SHA-1 + k-anonimato con relleno, supuesto del tiempo, cómo comprobarlo en la pestaña Red, código abierto).
+- Otros textos: encabezado "todo pasa en tu equipo"; mientras revisa "Solo enviamos un pedacito de su huella, nunca tu contraseña."; puntaje "Tardarían en adivinarla: X" / "Se adivina al instante".
+- CSS: estilos del desplegable técnico; el "−" solo en el `details` abierto (`> summary`).
+- 99 unitarias y E2E 72 pasan.
+
+---
+
 ## 2026-10-04 · Release 0.2.0
 
 **Rama:** `release/0.2.0` → PR a `main` (tag `v0.2.0`) y de vuelta a `develop`
